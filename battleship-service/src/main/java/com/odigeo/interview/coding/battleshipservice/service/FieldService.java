@@ -16,6 +16,11 @@ public class FieldService {
     @Inject
     private CoordinateService coordinateService;
 
+    /**
+     * Método harcoded, imagino que para la prueba del martes
+     * @param field
+     * @return
+     */
     public boolean allShipsSunk(Cell[][] field) {
         
         int totalHits = Arrays.stream(ShipType.values()).map(ShipType::getShipLength).mapToInt(Integer::intValue).sum();
@@ -32,18 +37,28 @@ public class FieldService {
     }
 
     /**
-     * Método imcompleto, imagino que para la prueba del martes
+     * Método harcoded, imagino que para la prueba del martes
      *
      * @param field
      * @param ship
      * @return
      */
     public boolean isShipSunk(Cell[][] field, Ship ship) {
-//        ship.getCoordinates().stream()
-//                .map(coordinate -> field[coordinate.getRow()][coordinate.getColumn()])
-//                .forEach(System.out::println);
+        // Check
+        //        ship.getCoordinates().stream()
+        //                .map(coordinate -> field[coordinate.getRow()][coordinate.getColumn()])
+        //                .forEach(System.out::println);
+
+        // Versión 1
+        //        return ship.getCoordinates().stream()
+        //                .allMatch(coordinate -> field[coordinate.getRow()][coordinate.getColumn()].isHit());
+
+        // Versión 2
         return ship.getCoordinates().stream()
-                .allMatch(coordinate -> field[coordinate.getRow()][coordinate.getColumn()].isHit());
+                .allMatch(coordinate -> {
+                    Cell cell = field[coordinate.getRow()][coordinate.getColumn()];
+                    return cell.isHit() && cell.getShip().getId() == ship.getId();
+                });
     }
 
     public Cell[][] buildField(List<Ship> shipsDeployment) {
