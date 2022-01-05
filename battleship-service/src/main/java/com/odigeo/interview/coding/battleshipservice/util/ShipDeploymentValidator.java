@@ -97,8 +97,6 @@ public class ShipDeploymentValidator {
      * @param ship
      */
     private void shipIsNotContiguous(Ship ship) {
-//        boolean shipIsHorizontalContiguous = isHorizontal(ship) && isHorizontalContiguous(ship);
-//        boolean shipIsVerticalContiguous = isVertical(ship) && isVerticalContiguous(ship);
         boolean shipIsHorizontalContiguous = isHorizontal(ship) && islContiguous(ship, (Coordinate c1, Coordinate c2) -> (c1.getColumn() + 1) == c2.getColumn());
         boolean shipIsVerticalContiguous = isVertical(ship) && islContiguous(ship, (Coordinate c1, Coordinate c2) -> (c1.getRow() + 1) == c2.getRow());
         if (!shipIsHorizontalContiguous && !shipIsVerticalContiguous) {
@@ -121,6 +119,12 @@ public class ShipDeploymentValidator {
         return coordinates.stream().allMatch(c -> c.getRow() == firstRow);
     }
 
+    private boolean isVertical(Ship ship) {
+        List<Coordinate> coordinates = ship.getCoordinates();
+        int firstColumn = coordinates.get(0).getColumn();
+        return coordinates.stream().allMatch(c -> c.getColumn() == firstColumn);
+    }
+
 //    private boolean isHorizontalContiguous(Ship ship) {
 //        List<Coordinate> coordinates = ship.getCoordinates();
 //        boolean isContiguous = true;
@@ -132,12 +136,6 @@ public class ShipDeploymentValidator {
 //        }
 //        return isContiguous;
 //    }
-
-    private boolean isVertical(Ship ship) {
-        List<Coordinate> coordinates = ship.getCoordinates();
-        int firstColumn = coordinates.get(0).getColumn();
-        return coordinates.stream().allMatch(c -> c.getColumn() == firstColumn);
-    }
 
 //    private boolean isVerticalContiguous(Ship ship) {
 //        List<Coordinate> coordinates = ship.getCoordinates();
