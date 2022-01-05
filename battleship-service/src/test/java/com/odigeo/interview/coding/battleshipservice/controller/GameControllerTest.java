@@ -13,6 +13,8 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import static org.mockito.Mockito.*;
+
 public class GameControllerTest {
 
     @InjectMocks
@@ -32,6 +34,13 @@ public class GameControllerTest {
         Mockito.reset(gameService);
     }
 
+    private void createGame(GameStartCommand gameStartCommand, Game game) {
+        gameStartCommand.setPlayerId("Player1");
+        gameStartCommand.setVsComputer(true);
+        game.setId(gameStartCommand.getPlayerId());
+        Mockito.when(gameService.newGame(Mockito.any())).thenReturn(game);
+    }
+
     @Test
     public void testNewGame() {
         GameStartCommand gameStartCommand = new GameStartCommand();
@@ -42,13 +51,6 @@ public class GameControllerTest {
         Assert.assertTrue(game.getId() == gameResponse.getId());
     }
 
-    private void createGame(GameStartCommand gameStartCommand, Game game) {
-        gameStartCommand.setPlayerId("Player1");
-        gameStartCommand.setVsComputer(true);
-        game.setId(gameStartCommand.getPlayerId());
-        Mockito.when(gameService.newGame(Mockito.any())).thenReturn(game);
-    }
-
     @Test
     public void testJoinGame() {
         GameJoinCommand gameJoinCommand = new GameJoinCommand();
@@ -57,6 +59,9 @@ public class GameControllerTest {
         Game game = new Game();
         createGame(gameStartCommand, game);
         GameResponse gameResponse = gameController.newGame(gameStartCommand);
+        verify(gameService, times(1)).newGame(any());
+        Assert.assertNotNull(gameResponse);
+        //verify(gameService, times(1)).joinGame(any(), any());
         gameController.joinGame(gameResponse.getId(), gameJoinCommand);
     }
 

@@ -1,6 +1,8 @@
 package com.odigeo.interview.coding.battleshipservice.model;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Contains the coordinates of each ship

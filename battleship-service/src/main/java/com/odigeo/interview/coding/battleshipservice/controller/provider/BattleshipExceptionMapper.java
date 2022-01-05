@@ -12,6 +12,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+// Exception Providers
+// These providers control the mapping of Java exceptions to a JAX-RS Response instance.
+// Marks an implementation of an extension interface that should be discoverable by JAX-RS runtime during a provider scanning phase.
 @Provider
 public class BattleshipExceptionMapper implements ExceptionMapper<BattleshipException> {
 

@@ -7,7 +7,9 @@ import com.odigeo.interview.coding.battleshipservice.model.ship.ShipType;
 
 import javax.inject.Singleton;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toList;
 
@@ -91,21 +93,45 @@ public class ShipDeploymentValidator {
 
     /**
      * Validate the ship location is either horizontal or vertical
+     *
      * @param ship
      */
     private void shipIsNotContiguous(Ship ship) {
-        boolean shipIsNotContiguous = !isHorizontal(ship) && !isVertical(ship);
-        if (shipIsNotContiguous) {
+//        boolean shipIsHorizontalContiguous = isHorizontal(ship) && isHorizontalContiguous(ship);
+//        boolean shipIsVerticalContiguous = isVertical(ship) && isVerticalContiguous(ship);
+        boolean shipIsHorizontalContiguous = isHorizontal(ship) && islContiguous(ship, (Coordinate c1, Coordinate c2) -> (c1.getColumn() + 1) == c2.getColumn());
+        boolean shipIsVerticalContiguous = isVertical(ship) && islContiguous(ship, (Coordinate c1, Coordinate c2) -> (c1.getRow() + 1) == c2.getRow());
+        if (!shipIsHorizontalContiguous && !shipIsVerticalContiguous) {
             throw new ShipDeploymentException(ship.getShipType().getShipTypeName(), ship.getCoordinates().stream().map(Coordinate::getValue).collect(toList()));
         }
+     }
+
+    private boolean islContiguous(Ship ship, BiFunction<Coordinate, Coordinate, Boolean> function) {
+        List<Coordinate> coordinates = ship.getCoordinates();
+        boolean isContiguous = false;
+        isContiguous = IntStream.range(1, coordinates.size()).boxed()
+                .map(i -> function.apply(coordinates.get(i - 1), coordinates.get(i)))
+                .allMatch(b -> b == true);
+        return isContiguous;
     }
 
     private boolean isHorizontal(Ship ship) {
         List<Coordinate> coordinates = ship.getCoordinates();
         int firstRow = coordinates.get(0).getRow();
         return coordinates.stream().allMatch(c -> c.getRow() == firstRow);
-        //return coordinates.stream().anyMatch(c -> c.getRow() != firstRow);
     }
+
+//    private boolean isHorizontalContiguous(Ship ship) {
+//        List<Coordinate> coordinates = ship.getCoordinates();
+//        boolean isContiguous = true;
+//        for (int i = 1; i < coordinates.size(); i++) {
+//            if (coordinates.get(i - 1).getColumn() + 1 != coordinates.get(i).getColumn()) {
+//                isContiguous = false;
+//                break;
+//            }
+//        }
+//        return isContiguous;
+//    }
 
     private boolean isVertical(Ship ship) {
         List<Coordinate> coordinates = ship.getCoordinates();
@@ -113,15 +139,23 @@ public class ShipDeploymentValidator {
         return coordinates.stream().allMatch(c -> c.getColumn() == firstColumn);
     }
 
+//    private boolean isVerticalContiguous(Ship ship) {
+//        List<Coordinate> coordinates = ship.getCoordinates();
+//        boolean isContiguous = true;
+//        for (int i = 1; i < coordinates.size(); i++) {
+//            if (coordinates.get(i - 1).getRow() + 1 != coordinates.get(i).getRow()) {
+//                isContiguous = false;
+//                break;
+//            }
+//        }
+//        return isContiguous;
+//    }
+
     private void shipsOverlap(Collection<Ship> deployedShips) {
         List<Coordinate> allCoordinates = deployedShips.stream()
                 .flatMap(ship -> ship.getCoordinates().stream())
                 .collect(toList());
         Set<Coordinate> reducedCoordinates = new HashSet<>(allCoordinates);
-
-        //        Set<Coordinate> reducedCoordinates = deployedShips.stream()
-        //                .flatMap(ship -> ship.getCoordinates().stream())
-        //                .collect(Collectors.toSet());
 
         boolean isOverlapping = allCoordinates.size() != reducedCoordinates.size();
         if (isOverlapping) {

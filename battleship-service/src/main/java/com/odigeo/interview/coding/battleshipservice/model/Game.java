@@ -124,6 +124,7 @@ public class Game {
         }
     }
 
+    // Me parece redundante este método con el método getPlayerField
     public Cell[][] getOpponentField(String playerId) {
         if (playerId.equals(getPlayerOneId())) {
             return getPlayerTwoField();

@@ -19,6 +19,12 @@ public class ShipDeploymentValidatorTest {
         shipDeploymentValidator = new ShipDeploymentValidator();
     }
 
+    @Test(expectedExceptions = ShipDeploymentException.class)
+    public void testValidateWithWrongShipNotContiguous() {
+        List<Ship> shipsDeployment = ShipDeploymentBuilder.buildShipNotContiguousDeployment();
+        shipDeploymentValidator.validate(shipsDeployment);
+    }
+
     @Test
     public void testValidateWithValidDeployment() {
         shipDeploymentValidator.validate(ShipDeploymentBuilder.buildValidDeployment());

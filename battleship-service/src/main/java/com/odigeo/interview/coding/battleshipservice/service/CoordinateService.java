@@ -25,11 +25,6 @@ public class CoordinateService {
             throw new WrongCoordinateException(coordinate);
         }
 
-        //        if (!coordinate.matches(COORDINATE_REGEX)) {
-        //            throw new WrongCoordinateException(coordinate);
-        //        }
-
-
         String column = matcher.group(1);
         String row = matcher.group(2);
 

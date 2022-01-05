@@ -10,6 +10,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
+// Exception Providers
+// These providers control the mapping of Java exceptions to a JAX-RS Response instance.
 @Provider
 @Produces(MediaType.APPLICATION_JSON)
 public class RuntimeExceptionMapper implements ExceptionMapper<RuntimeException> {

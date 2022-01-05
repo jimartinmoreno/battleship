@@ -7,6 +7,8 @@ import fish.payara.cloud.connectors.kafka.api.KafkaConnection;
 import fish.payara.cloud.connectors.kafka.api.KafkaConnectionFactory;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.*;
+
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.testng.annotations.AfterMethod;
@@ -34,37 +36,37 @@ public class KafkaProducerServiceTest {
 
     @AfterMethod
     public void tearDown() {
-        Mockito.reset(kafkaConnection);
-        Mockito.reset(kafkaConnectionFactory);
+        reset(kafkaConnection);
+        reset(kafkaConnectionFactory);
     }
 
     @Test()
     public void testGameCreatedEvent() throws ResourceException {
-        Mockito.when(kafkaConnectionFactory.createConnection()).thenReturn(kafkaConnection);
+        when(kafkaConnectionFactory.createConnection()).thenReturn(kafkaConnection);
         kafkaProducerService.setFactory(kafkaConnectionFactory);
         kafkaProducerService.publish(new GameCreatedEvent());
-        Mockito.verify(kafkaConnection, Mockito.times(1)).send(Mockito.any());
+        verify(kafkaConnection, Mockito.times(1)).send(Mockito.any());
     }
 
     @Test()
     public void testGameFireEvent() throws ResourceException {
-        Mockito.when(kafkaConnectionFactory.createConnection()).thenReturn(kafkaConnection);
+        when(kafkaConnectionFactory.createConnection()).thenReturn(kafkaConnection);
         kafkaProducerService.setFactory(kafkaConnectionFactory);
         kafkaProducerService.publish(new GameFireEvent());
-        Mockito.verify(kafkaConnection, Mockito.times(1)).send(Mockito.any());
+        verify(kafkaConnection, Mockito.times(1)).send(Mockito.any());
     }
 
 
     @Test(expectedExceptions = KafkaProducerException.class)
     public void testGameCreatedEventException() throws ResourceException {
-        Mockito.when(kafkaConnectionFactory.createConnection()).thenThrow(new ResourceException("not connected"));
+        when(kafkaConnectionFactory.createConnection()).thenThrow(new ResourceException("not connected"));
         kafkaProducerService.setFactory(kafkaConnectionFactory);
         kafkaProducerService.publish(new GameCreatedEvent());
     }
 
     @Test(expectedExceptions = KafkaProducerException.class)
     public void testGameFireEventException() throws ResourceException {
-        Mockito.when(kafkaConnectionFactory.createConnection()).thenThrow(new ResourceException("not connected"));
+        when(kafkaConnectionFactory.createConnection()).thenThrow(new ResourceException("not connected"));
         kafkaProducerService.setFactory(kafkaConnectionFactory);
         kafkaProducerService.publish(new GameFireEvent());
     }

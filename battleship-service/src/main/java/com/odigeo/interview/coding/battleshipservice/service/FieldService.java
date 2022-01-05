@@ -4,6 +4,8 @@ import com.odigeo.interview.coding.battleshipservice.model.Cell;
 import com.odigeo.interview.coding.battleshipservice.model.ship.Ship;
 import com.odigeo.interview.coding.battleshipservice.model.ship.ShipType;
 import com.odigeo.interview.coding.battleshipservice.util.GameConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -13,20 +15,27 @@ import java.util.List;
 @Singleton
 public class FieldService {
 
+    private static final Logger logger = LoggerFactory.getLogger(FieldService.class);
+
     @Inject
     private CoordinateService coordinateService;
 
     /**
      * Método harcoded, imagino que para la prueba del martes
+     *
      * @param field
      * @return
      */
     public boolean allShipsSunk(Cell[][] field) {
-        
-        int totalHits = Arrays.stream(ShipType.values()).map(ShipType::getShipLength).mapToInt(Integer::intValue).sum();
+
+        int totalHits = Arrays.stream(ShipType.values())
+                .map(ShipType::getShipLength)
+                .mapToInt(Integer::intValue)
+                .sum();
         //System.out.println("totalHits = " + totalHits);
 
-        long hitCount = Arrays.stream(field).flatMap(cells -> Arrays.stream(cells))
+        long hitCount = Arrays.stream(field)
+                .flatMap(cells -> Arrays.stream(cells))
                 //.peek(System.out::println)
                 .filter(Cell::isHit)
                 .count();
@@ -53,12 +62,15 @@ public class FieldService {
         //        return ship.getCoordinates().stream()
         //                .allMatch(coordinate -> field[coordinate.getRow()][coordinate.getColumn()].isHit());
 
+        return !ship.getCoordinates().stream()
+                .anyMatch(coordinate -> !field[coordinate.getRow()][coordinate.getColumn()].isHit());
+
         // Versión 2
-        return ship.getCoordinates().stream()
-                .allMatch(coordinate -> {
-                    Cell cell = field[coordinate.getRow()][coordinate.getColumn()];
-                    return cell.isHit() && cell.getShip().getId() == ship.getId();
-                });
+        //        return ship.getCoordinates().stream()
+        //                .allMatch(coordinate -> {
+        //                    Cell cell = field[coordinate.getRow()][coordinate.getColumn()];
+        //                    return cell.isHit() && cell.getShip().getId() == ship.getId();
+        //                });
     }
 
     public Cell[][] buildField(List<Ship> shipsDeployment) {

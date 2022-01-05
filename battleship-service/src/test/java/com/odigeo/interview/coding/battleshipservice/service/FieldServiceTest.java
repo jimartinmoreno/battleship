@@ -9,7 +9,6 @@ import org.mockito.Mock;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -37,6 +36,16 @@ public class FieldServiceTest {
         when(coordinateService.decodeCoordinate(any())).thenCallRealMethod();
         shipsDeployment = ShipDeploymentBuilder.buildValidDeployment();
         field = fieldService.buildField(shipsDeployment);
+    }
+
+    @Test
+    public void testShipSunkFullHit() {
+        List<Coordinate> coordinates = shipsDeployment.get(0).getCoordinates();
+        coordinates.forEach(coordinate -> {
+            field[coordinate.getRow()][coordinate.getColumn()].hit();
+        });
+        boolean isShipSunk = fieldService.isShipSunk(field, shipsDeployment.get(0));
+        assertTrue(isShipSunk);
     }
 
     @Test

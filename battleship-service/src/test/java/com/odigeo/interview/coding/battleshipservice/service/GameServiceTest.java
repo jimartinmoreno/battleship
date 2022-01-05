@@ -52,6 +52,7 @@ public class GameServiceTest {
     @BeforeMethod
     public void init() {
         initMocks(this);
+        // Call real methods
         when(coordinateService.decodeCoordinate(any())).thenCallRealMethod();
         when(fieldService.allShipsSunk(any())).thenCallRealMethod();
         when(fieldService.isShipSunk(any(), any())).thenCallRealMethod();
