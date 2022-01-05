@@ -93,24 +93,19 @@ public class ShipDeploymentValidator {
 
     /**
      * Validate the ship location is either horizontal or vertical
-     *
-     * @param ship
      */
     private void shipIsNotContiguous(Ship ship) {
-        boolean shipIsHorizontalContiguous = isHorizontal(ship) && islContiguous(ship, (Coordinate c1, Coordinate c2) -> (c1.getColumn() + 1) == c2.getColumn());
-        boolean shipIsVerticalContiguous = isVertical(ship) && islContiguous(ship, (Coordinate c1, Coordinate c2) -> (c1.getRow() + 1) == c2.getRow());
+        boolean shipIsHorizontalContiguous = isHorizontal(ship) && isContiguous(ship, (Coordinate c1, Coordinate c2) -> c1.getColumn() + 1 != c2.getColumn());
+        boolean shipIsVerticalContiguous = isVertical(ship) && isContiguous(ship, (Coordinate c1, Coordinate c2) -> c1.getRow() + 1 != c2.getRow());
         if (!shipIsHorizontalContiguous && !shipIsVerticalContiguous) {
             throw new ShipDeploymentException(ship.getShipType().getShipTypeName(), ship.getCoordinates().stream().map(Coordinate::getValue).collect(toList()));
         }
-     }
+    }
 
-    private boolean islContiguous(Ship ship, BiFunction<Coordinate, Coordinate, Boolean> function) {
+     private boolean isContiguous(Ship ship, BiPredicate<Coordinate, Coordinate> function) {
         List<Coordinate> coordinates = ship.getCoordinates();
-        boolean isContiguous = false;
-        isContiguous = IntStream.range(1, coordinates.size()).boxed()
-                .map(i -> function.apply(coordinates.get(i - 1), coordinates.get(i)))
-                .allMatch(b -> b == true);
-        return isContiguous;
+        return !IntStream.range(1, coordinates.size())
+                .anyMatch(i -> function.test(coordinates.get(i - 1), coordinates.get(i)));
     }
 
     private boolean isHorizontal(Ship ship) {
