@@ -38,24 +38,6 @@ public class ShipDeploymentValidator {
             }
             deployedTypes.add(shipType);
         }
-        // Alternativas
-
-        // Alternativa 1
-        //        ships.stream()
-        //                .filter(ship -> Collections.frequency(ships, ship) > 1)
-        //                .forEach(ship -> {
-        //                    throw new ShipDeploymentException(ship.getShipType().getShipTypeName(),
-        //                            ship.getCoordinates().stream().map(Coordinate::getValue).collect(toList()));
-        //                });
-
-        // Alternativa 2
-        //        Set<ShipType> deployedShipTypes = new HashSet<>();
-        //        ships.stream()
-        //                .filter(ship -> !deployedShipTypes.add(ship.getShipType()))
-        //                .forEach(ship -> {
-        //                    throw new ShipDeploymentException(ship.getShipType().getShipTypeName(),
-        //                            ship.getCoordinates().stream().map(Coordinate::getValue).collect(toList()));
-        //                });
 
     }
 
@@ -100,10 +82,10 @@ public class ShipDeploymentValidator {
         }
     }
 
-    private boolean isContiguous(Ship ship, BiPredicate<Coordinate, Coordinate> function) {
+    private boolean isContiguous(Ship ship, BiPredicate<Coordinate, Coordinate> predicate) {
         List<Coordinate> coordinates = ship.getCoordinates();
         return !IntStream.range(1, coordinates.size())
-                .anyMatch(i -> function.test(coordinates.get(i - 1), coordinates.get(i)));
+                .anyMatch(i -> predicate.test(coordinates.get(i - 1), coordinates.get(i)));
     }
 
     private boolean isHorizontal(Ship ship) {
@@ -117,30 +99,6 @@ public class ShipDeploymentValidator {
         int firstColumn = coordinates.get(0).getColumn();
         return coordinates.stream().allMatch(c -> c.getColumn() == firstColumn);
     }
-
-//    private boolean isHorizontalContiguous(Ship ship) {
-//        List<Coordinate> coordinates = ship.getCoordinates();
-//        boolean isContiguous = true;
-//        for (int i = 1; i < coordinates.size(); i++) {
-//            if (coordinates.get(i - 1).getColumn() + 1 != coordinates.get(i).getColumn()) {
-//                isContiguous = false;
-//                break;
-//            }
-//        }
-//        return isContiguous;
-//    }
-
-//    private boolean isVerticalContiguous(Ship ship) {
-//        List<Coordinate> coordinates = ship.getCoordinates();
-//        boolean isContiguous = true;
-//        for (int i = 1; i < coordinates.size(); i++) {
-//            if (coordinates.get(i - 1).getRow() + 1 != coordinates.get(i).getRow()) {
-//                isContiguous = false;
-//                break;
-//            }
-//        }
-//        return isContiguous;
-//    }
 
     private void shipsOverlap(Collection<Ship> deployedShips) {
         List<Coordinate> allCoordinates = deployedShips.stream()
