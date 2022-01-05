@@ -7,8 +7,7 @@ import com.odigeo.interview.coding.battleshipservice.model.ship.ShipType;
 
 import javax.inject.Singleton;
 import java.util.*;
-import java.util.function.BiFunction;
-import java.util.function.Function;
+import java.util.function.BiPredicate;
 import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toList;
@@ -39,7 +38,6 @@ public class ShipDeploymentValidator {
             }
             deployedTypes.add(shipType);
         }
-
         // Alternativas
 
         // Alternativa 1
@@ -102,7 +100,7 @@ public class ShipDeploymentValidator {
         }
     }
 
-     private boolean isContiguous(Ship ship, BiPredicate<Coordinate, Coordinate> function) {
+    private boolean isContiguous(Ship ship, BiPredicate<Coordinate, Coordinate> function) {
         List<Coordinate> coordinates = ship.getCoordinates();
         return !IntStream.range(1, coordinates.size())
                 .anyMatch(i -> function.test(coordinates.get(i - 1), coordinates.get(i)));
